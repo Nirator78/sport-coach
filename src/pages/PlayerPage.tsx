@@ -24,6 +24,7 @@ import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { formatDuration } from '../utils/estimateDuration';
 import type { WorkoutLog } from '../types/workout';
 import { exportLog } from '../utils/exportImport';
+import { HelpButton } from '../components/ui/HelpPanel';
 
 function blockColor(type: string): string {
   switch (type) {
@@ -164,6 +165,9 @@ export function PlayerPage() {
       <div className="flex items-center justify-between px-4 py-3">
         <span className="text-sm text-slate-400">{session.name}</span>
         <div className="flex items-center gap-1.5">
+          {/* Help */}
+          <HelpButton variant="player" />
+
           {/* Sound toggle (beeps) */}
           <button
             onClick={() => settings.setSoundEnabled(!settings.soundEnabled)}

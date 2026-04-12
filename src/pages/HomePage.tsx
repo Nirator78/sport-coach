@@ -15,6 +15,7 @@ import { Modal } from '../components/ui/Modal';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { estimateDuration, formatDuration } from '../utils/estimateDuration';
 import { importSession } from '../utils/exportImport';
+import { HelpButton } from '../components/ui/HelpPanel';
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ export function HomePage() {
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-slate-50">Mes séances</h1>
         <div className="flex gap-2">
+          <HelpButton variant="home" />
           <button
             onClick={() => fileInputRef.current?.click()}
             className="flex items-center gap-2 rounded-xl bg-slate-700 px-4 py-2.5 text-sm font-medium text-slate-200 transition-colors hover:bg-slate-600"
