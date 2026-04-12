@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   SkipBack,
@@ -93,8 +93,10 @@ export function PlayerPage() {
 
   const speech = useSpeechRecognition(handleVoiceCommand);
 
+  const hasStartedRef = useRef(false);
   useEffect(() => {
-    if (session && state.status === 'idle') {
+    if (session && state.status === 'idle' && !hasStartedRef.current) {
+      hasStartedRef.current = true;
       controls.start(session.blocks);
     }
   }, [session, state.status, controls]);
