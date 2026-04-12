@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { useLocalStorage } from './useLocalStorage';
 
 function createContext(): AudioContext | null {
   try {
@@ -22,9 +23,14 @@ function playTone(ctx: AudioContext, frequency: number, duration: number, startT
 }
 
 export function useAudioFeedback() {
+  const [muted, setMuted] = useLocalStorage('workout-sound-muted', false);
+  const mutedRef = useRef(muted);
+  mutedRef.current = muted;
+
   const ctxRef = useRef<AudioContext | null>(null);
 
   const getCtx = useCallback(() => {
+    if (mutedRef.current) return null;
     if (!ctxRef.current || ctxRef.current.state === 'closed') {
       ctxRef.current = createContext();
     }
@@ -55,5 +61,5 @@ export function useAudioFeedback() {
     playTone(ctx, 784, 0.25, ctx.currentTime + 0.4);
   }, [getCtx]);
 
-  return { tickBeep, transitionBeep, finishBeep };
+  return { tickBeep, transitionBeep, finishBeep, muted, setMuted };
 }

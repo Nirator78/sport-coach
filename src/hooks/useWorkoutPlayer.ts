@@ -3,6 +3,7 @@ import type { Block, WorkoutLog } from '../types/workout';
 import { flattenBlocks } from '../utils/flattenBlocks';
 import { useCountdown } from './useCountdown';
 import { useAudioFeedback } from './useAudioFeedback';
+import { useSpeechSynthesis } from './useSpeechSynthesis';
 import { uid } from '../utils/uid';
 
 type PlayerStatus = 'idle' | 'running' | 'paused' | 'finished';
@@ -25,17 +26,25 @@ interface PlayerControls {
   stop: () => void;
 }
 
+interface PlayerSettings {
+  soundEnabled: boolean;
+  setSoundEnabled: (enabled: boolean) => void;
+  voiceEnabled: boolean;
+  setVoiceEnabled: (enabled: boolean) => void;
+}
+
 export function useWorkoutPlayer(
   sessionId: string,
   sessionName: string,
   onFinish: (log: WorkoutLog) => void,
-): [PlayerState, PlayerControls] {
+): [PlayerState, PlayerControls, PlayerSettings] {
   const [flatBlocks, setFlatBlocks] = useState<Block[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [status, setStatus] = useState<PlayerStatus>('idle');
   const startTimeRef = useRef<string>(new Date().toISOString());
   const blocksSnapshotRef = useRef<Block[]>([]);
-  const { tickBeep, transitionBeep, finishBeep } = useAudioFeedback();
+  const { tickBeep, transitionBeep, finishBeep, muted: soundMuted, setMuted: setSoundMuted } = useAudioFeedback();
+  const { announce, stop: stopTts, enabled: voiceEnabled, setEnabled: setVoiceEnabled } = useSpeechSynthesis();
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
 
@@ -55,8 +64,9 @@ export function useWorkoutPlayer(
         countdownControls.reset();
       }
       transitionBeep();
+      announce(block);
     },
-    [countdownControls, transitionBeep],
+    [countdownControls, transitionBeep, announce],
   );
 
   // Beep on last 3 seconds
@@ -83,6 +93,7 @@ export function useWorkoutPlayer(
       if (nextIdx >= flatBlocks.length) {
         setStatus('finished');
         finishBeep();
+        stopTts();
         const log: WorkoutLog = {
           id: uid(),
           sessionId,
@@ -98,7 +109,7 @@ export function useWorkoutPlayer(
         goToBlock(nextIdx, flatBlocks);
       }
     }
-  }, [countdown.remaining, countdown.isRunning, countdown.total, status, currentIndex, flatBlocks, finishBeep, goToBlock, sessionId, sessionName]);
+  }, [countdown.remaining, countdown.isRunning, countdown.total, status, currentIndex, flatBlocks, finishBeep, goToBlock, sessionId, sessionName, stopTts]);
 
   const start = useCallback(
     (blocks: Block[]) => {
@@ -121,6 +132,7 @@ export function useWorkoutPlayer(
     if (nextIdx >= flatBlocks.length) {
       setStatus('finished');
       finishBeep();
+      stopTts();
       const log: WorkoutLog = {
         id: uid(),
         sessionId,
@@ -136,7 +148,7 @@ export function useWorkoutPlayer(
     setCurrentIndex(nextIdx);
     if (status === 'paused') setStatus('running');
     goToBlock(nextIdx, flatBlocks);
-  }, [status, currentIndex, flatBlocks, finishBeep, goToBlock, sessionId, sessionName]);
+  }, [status, currentIndex, flatBlocks, finishBeep, goToBlock, sessionId, sessionName, stopTts]);
 
   const previous = useCallback(() => {
     if (status !== 'running' && status !== 'paused') return;
@@ -161,7 +173,8 @@ export function useWorkoutPlayer(
     countdownControls.reset();
     setCurrentIndex(0);
     setFlatBlocks([]);
-  }, [countdownControls]);
+    stopTts();
+  }, [countdownControls, stopTts]);
 
   const currentBlock = flatBlocks[currentIndex] ?? null;
   const nextBlock = flatBlocks[currentIndex + 1] ?? null;
@@ -177,5 +190,11 @@ export function useWorkoutPlayer(
       countdown,
     },
     { start, next, previous, togglePause, stop },
+    {
+      soundEnabled: !soundMuted,
+      setSoundEnabled: (v: boolean) => setSoundMuted(!v),
+      voiceEnabled,
+      setVoiceEnabled,
+    },
   ];
 }

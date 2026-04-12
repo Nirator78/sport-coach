@@ -11,6 +11,10 @@ import {
   ArrowLeft,
   Trophy,
   Download,
+  Volume2,
+  VolumeX,
+  Bell,
+  BellOff,
 } from 'lucide-react';
 import { useWorkout } from '../stores/workoutStore';
 import { useWorkoutPlayer } from '../hooks/useWorkoutPlayer';
@@ -63,7 +67,7 @@ export function PlayerPage() {
     [addLog],
   );
 
-  const [state, controls] = useWorkoutPlayer(
+  const [state, controls, settings] = useWorkoutPlayer(
     session?.id ?? '',
     session?.name ?? '',
     handleFinish,
@@ -159,7 +163,36 @@ export function PlayerPage() {
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3">
         <span className="text-sm text-slate-400">{session.name}</span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          {/* Sound toggle (beeps) */}
+          <button
+            onClick={() => settings.setSoundEnabled(!settings.soundEnabled)}
+            className={`rounded-xl p-2 transition-colors ${
+              settings.soundEnabled
+                ? 'bg-slate-700 text-amber-400 hover:bg-slate-600'
+                : 'bg-slate-800 text-slate-600 hover:text-slate-400'
+            }`}
+            aria-label={settings.soundEnabled ? 'Couper les bips' : 'Activer les bips'}
+            title={settings.soundEnabled ? 'Bips activés' : 'Bips désactivés'}
+          >
+            {settings.soundEnabled ? <Bell className="h-5 w-5" /> : <BellOff className="h-5 w-5" />}
+          </button>
+
+          {/* Voice toggle (TTS) */}
+          <button
+            onClick={() => settings.setVoiceEnabled(!settings.voiceEnabled)}
+            className={`rounded-xl p-2 transition-colors ${
+              settings.voiceEnabled
+                ? 'bg-slate-700 text-sky-400 hover:bg-slate-600'
+                : 'bg-slate-800 text-slate-600 hover:text-slate-400'
+            }`}
+            aria-label={settings.voiceEnabled ? 'Couper la voix' : 'Activer la voix'}
+            title={settings.voiceEnabled ? 'Synthèse vocale activée' : 'Synthèse vocale désactivée'}
+          >
+            {settings.voiceEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
+          </button>
+
+          {/* Mic (speech recognition) */}
           <button
             onClick={speech.supported ? speech.toggle : undefined}
             disabled={!speech.supported}
@@ -177,13 +210,15 @@ export function PlayerPage() {
                   ? 'Désactiver le micro'
                   : 'Activer le micro'
             }
-            title={speech.error ?? (!speech.supported ? 'Commande vocale non supportée (utilisez Chrome)' : undefined)}
+            title={speech.error ?? (!speech.supported ? 'Commande vocale non supportée (utilisez Chrome)' : speech.listening ? 'Micro activé' : 'Commande vocale')}
           >
             {speech.listening ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
             {speech.listening && (
               <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-red-400" />
             )}
           </button>
+
+          {/* Stop */}
           <button
             onClick={() => setShowStopConfirm(true)}
             className="rounded-xl bg-slate-700 p-2 text-red-400 transition-colors hover:bg-red-600 hover:text-white"
