@@ -47,6 +47,7 @@ function getSpeechRecognitionClass(): (new () => SpeechRecognitionInstance) | nu
 export function useSpeechRecognition(onCommand: (cmd: VoiceCommand) => void) {
   const supported = getSpeechRecognitionClass() !== null;
   const [listening, setListening] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [lastCommand, setLastCommand] = useState<string | null>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const onCommandRef = useRef(onCommand);
@@ -67,11 +68,14 @@ export function useSpeechRecognition(onCommand: (cmd: VoiceCommand) => void) {
     if (!SpeechRecognitionClass) return;
 
     stop();
+    setError(null);
 
     const recognition = new SpeechRecognitionClass();
     recognition.lang = 'fr-FR';
     recognition.continuous = true;
     recognition.interimResults = false;
+
+    const startedAt = Date.now();
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -92,12 +96,27 @@ export function useSpeechRecognition(onCommand: (cmd: VoiceCommand) => void) {
     };
 
     recognition.onerror = (event) => {
-      if (event.error !== 'aborted' && event.error !== 'no-speech') {
-        stop();
+      if (event.error === 'aborted' || event.error === 'no-speech') return;
+
+      if (event.error === 'network' || event.error === 'service-not-available') {
+        setError('Service vocal indisponible sur ce navigateur (utilisez Chrome)');
+      } else if (event.error === 'not-allowed') {
+        setError('Accès au micro refusé');
+      } else {
+        setError(`Erreur micro : ${event.error}`);
       }
+      stop();
     };
 
     recognition.onend = () => {
+      // If it died within 2s of starting without an explicit error, the service is broken
+      if (shouldRestartRef.current && Date.now() - startedAt < 2000 && !error) {
+        setError('Service vocal indisponible sur ce navigateur (utilisez Chrome)');
+        shouldRestartRef.current = false;
+        setListening(false);
+        return;
+      }
+
       if (shouldRestartRef.current) {
         try {
           recognition.start();
@@ -118,12 +137,14 @@ export function useSpeechRecognition(onCommand: (cmd: VoiceCommand) => void) {
       setListening(true);
     } catch {
       shouldRestartRef.current = false;
+      setError('Impossible de démarrer la reconnaissance vocale');
     }
-  }, [stop]);
+  }, [stop, error]);
 
   const toggle = useCallback(() => {
     if (listening) {
       stop();
+      setError(null);
     } else {
       start();
     }
@@ -136,5 +157,5 @@ export function useSpeechRecognition(onCommand: (cmd: VoiceCommand) => void) {
     };
   }, []);
 
-  return { supported, listening, lastCommand, toggle, start, stop };
+  return { supported, listening, error, lastCommand, toggle, start, stop };
 }

@@ -160,22 +160,30 @@ export function PlayerPage() {
       <div className="flex items-center justify-between px-4 py-3">
         <span className="text-sm text-slate-400">{session.name}</span>
         <div className="flex items-center gap-2">
-          {speech.supported && (
-            <button
-              onClick={speech.toggle}
-              className={`relative rounded-xl p-2 transition-colors ${
-                speech.listening
+          <button
+            onClick={speech.supported ? speech.toggle : undefined}
+            disabled={!speech.supported}
+            className={`relative rounded-xl p-2 transition-colors ${
+              !speech.supported || speech.error
+                ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
+                : speech.listening
                   ? 'bg-red-600 text-white'
                   : 'bg-slate-700 text-slate-400 hover:text-slate-200'
-              }`}
-              aria-label={speech.listening ? 'Désactiver le micro' : 'Activer le micro'}
-            >
-              {speech.listening ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
-              {speech.listening && (
-                <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-red-400" />
-              )}
-            </button>
-          )}
+            }`}
+            aria-label={
+              !speech.supported
+                ? 'Commande vocale non supportée par ce navigateur'
+                : speech.listening
+                  ? 'Désactiver le micro'
+                  : 'Activer le micro'
+            }
+            title={speech.error ?? (!speech.supported ? 'Commande vocale non supportée (utilisez Chrome)' : undefined)}
+          >
+            {speech.listening ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
+            {speech.listening && (
+              <span className="absolute -right-1 -top-1 h-3 w-3 animate-pulse rounded-full bg-red-400" />
+            )}
+          </button>
           <button
             onClick={() => setShowStopConfirm(true)}
             className="rounded-xl bg-slate-700 p-2 text-red-400 transition-colors hover:bg-red-600 hover:text-white"
@@ -187,6 +195,11 @@ export function PlayerPage() {
       </div>
 
       {/* Voice feedback */}
+      {speech.error && (
+        <div className="mx-4 mb-2 rounded-xl bg-red-900/30 px-3 py-2 text-center text-xs text-red-300">
+          {speech.error}
+        </div>
+      )}
       {speech.lastCommand && (
         <div className="mx-auto mb-2 rounded-full bg-emerald-600/20 px-3 py-1 text-xs font-medium text-emerald-300 animate-pulse">
           Commande : &quot;{speech.lastCommand}&quot;
