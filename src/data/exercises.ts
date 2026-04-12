@@ -1,0 +1,51 @@
+import type { Exercise } from '../types/exercise';
+
+export const BUILTIN_EXERCISES: Exercise[] = [
+  // Upper body
+  { id: 'push-ups', name: 'Pompes classiques', category: 'upper', muscleGroups: ['chest', 'triceps', 'shoulders'], description: 'Mains écartées à la largeur des épaules, descendre la poitrine au sol. Garder le corps aligné.', defaultType: 'reps', defaultValue: 12, difficulty: 'medium', met: 3.8, variants: ['Pompes genoux', 'Pompes diamant', 'Pompes déclinées'] },
+  { id: 'diamond-push-ups', name: 'Pompes diamant', category: 'upper', muscleGroups: ['triceps', 'chest'], description: 'Mains rapprochées en losange sous la poitrine. Cible davantage les triceps.', defaultType: 'reps', defaultValue: 10, difficulty: 'hard', met: 4.0 },
+  { id: 'pike-push-ups', name: 'Pike Push-ups', category: 'upper', muscleGroups: ['shoulders', 'triceps'], description: 'Position en V inversé, fléchir les bras pour amener la tête vers le sol. Cible les épaules.', defaultType: 'reps', defaultValue: 10, difficulty: 'hard', met: 3.8 },
+  { id: 'dips-chair', name: 'Dips sur chaise', category: 'upper', muscleGroups: ['triceps', 'chest', 'shoulders'], description: 'Dos face à une chaise, mains sur le rebord, descendre à 90° et remonter.', defaultType: 'reps', defaultValue: 12, difficulty: 'medium', met: 3.5 },
+  { id: 'incline-push-ups', name: 'Pompes inclinées', category: 'upper', muscleGroups: ['chest', 'triceps'], description: 'Mains sur un support surélevé (table, muret). Version plus facile des pompes.', defaultType: 'reps', defaultValue: 15, difficulty: 'easy', met: 3.0 },
+  { id: 'arm-circles', name: 'Cercles de bras', category: 'upper', muscleGroups: ['shoulders'], description: 'Bras tendus sur les côtés, faire des cercles croissants puis décroissants.', defaultType: 'timed', defaultValue: 30, difficulty: 'easy', met: 2.5 },
+
+  // Lower body
+  { id: 'squats', name: 'Squats', category: 'lower', muscleGroups: ['quads', 'glutes', 'hamstrings'], description: 'Pieds écartés à la largeur des épaules, descendre en gardant le dos droit. Genoux alignés avec les pieds.', defaultType: 'reps', defaultValue: 15, difficulty: 'easy', met: 5.0, variants: ['Squats sautés', 'Squats sumo', 'Squats bulgares'] },
+  { id: 'jump-squats', name: 'Squats sautés', category: 'lower', muscleGroups: ['quads', 'glutes', 'calves'], description: 'Squat classique suivi d\'un saut explosif. Amortir la réception en fléchissant les genoux.', defaultType: 'reps', defaultValue: 12, difficulty: 'hard', met: 8.0 },
+  { id: 'lunges', name: 'Fentes avant alternées', category: 'lower', muscleGroups: ['quads', 'glutes', 'hamstrings'], description: 'Un grand pas en avant, descendre le genou arrière vers le sol. Alterner les jambes.', defaultType: 'reps', defaultValue: 12, difficulty: 'medium', met: 5.0 },
+  { id: 'sumo-squats', name: 'Squats sumo', category: 'lower', muscleGroups: ['quads', 'glutes'], description: 'Pieds très écartés, pointes vers l\'extérieur. Descendre en gardant le buste droit.', defaultType: 'reps', defaultValue: 15, difficulty: 'easy', met: 4.5 },
+  { id: 'wall-sit', name: 'Chaise (wall sit)', category: 'lower', muscleGroups: ['quads', 'glutes'], description: 'Dos plaqué au mur, cuisses parallèles au sol. Maintenir la position.', defaultType: 'timed', defaultValue: 40, difficulty: 'medium', met: 3.5 },
+  { id: 'calf-raises', name: 'Élévations mollets', category: 'lower', muscleGroups: ['calves'], description: 'Debout sur la pointe des pieds, monter et descendre lentement. Utiliser un escalier pour plus d\'amplitude.', defaultType: 'reps', defaultValue: 20, difficulty: 'easy', met: 3.0 },
+  { id: 'glute-bridges', name: 'Pont fessier', category: 'lower', muscleGroups: ['glutes', 'hamstrings'], description: 'Allongé sur le dos, pieds au sol, soulever les hanches en serrant les fessiers.', defaultType: 'reps', defaultValue: 15, difficulty: 'easy', met: 3.5 },
+  { id: 'side-lunges', name: 'Fentes latérales', category: 'lower', muscleGroups: ['quads', 'glutes'], description: 'Grand pas sur le côté, fléchir un genou en gardant l\'autre jambe tendue. Alterner.', defaultType: 'reps', defaultValue: 12, difficulty: 'medium', met: 4.5 },
+
+  // Core
+  { id: 'plank', name: 'Planche frontale', category: 'core', muscleGroups: ['abs', 'obliques'], description: 'Appui sur les coudes et les pieds, corps aligné de la tête aux talons. Ne pas creuser le dos.', defaultType: 'timed', defaultValue: 30, difficulty: 'medium', met: 3.8 },
+  { id: 'side-plank', name: 'Gainage latéral', category: 'core', muscleGroups: ['obliques', 'abs'], description: 'Appui sur un coude et le côté du pied, corps aligné. Alterner les côtés.', defaultType: 'timed', defaultValue: 25, difficulty: 'medium', met: 3.5 },
+  { id: 'crunches', name: 'Crunchs', category: 'core', muscleGroups: ['abs'], description: 'Allongé sur le dos, mains derrière la tête, décoller les épaules du sol. Regard vers le plafond.', defaultType: 'reps', defaultValue: 20, difficulty: 'easy', met: 3.0 },
+  { id: 'mountain-climbers', name: 'Mountain Climbers', category: 'core', muscleGroups: ['abs', 'full'], description: 'Position de pompe, ramener alternativement les genoux vers la poitrine rapidement.', defaultType: 'timed', defaultValue: 30, difficulty: 'hard', met: 8.0 },
+  { id: 'leg-raises', name: 'Relevés de jambes', category: 'core', muscleGroups: ['abs'], description: 'Allongé sur le dos, lever les jambes tendues à 90° puis redescendre sans toucher le sol.', defaultType: 'reps', defaultValue: 12, difficulty: 'medium', met: 3.5 },
+  { id: 'russian-twists', name: 'Russian Twists', category: 'core', muscleGroups: ['obliques', 'abs'], description: 'Assis, pieds décollés du sol, tourner le buste de gauche à droite en touchant le sol de chaque côté.', defaultType: 'reps', defaultValue: 20, difficulty: 'medium', met: 3.8 },
+  { id: 'bicycle-crunches', name: 'Crunchs vélo', category: 'core', muscleGroups: ['abs', 'obliques'], description: 'Allongé, ramener un genou vers le coude opposé en alternant. Mouvement de pédalage.', defaultType: 'reps', defaultValue: 20, difficulty: 'medium', met: 3.5 },
+  { id: 'dead-bug', name: 'Dead Bug', category: 'core', muscleGroups: ['abs'], description: 'Allongé sur le dos, bras et jambes levés. Étendre un bras et la jambe opposée simultanément. Dos plaqué au sol.', defaultType: 'reps', defaultValue: 12, difficulty: 'easy', met: 3.0 },
+
+  // Cardio
+  { id: 'jumping-jacks', name: 'Jumping Jacks', category: 'cardio', muscleGroups: ['full'], description: 'Sauter en écartant les bras et les jambes, puis revenir en position debout. Rythme soutenu.', defaultType: 'timed', defaultValue: 40, difficulty: 'easy', met: 7.0 },
+  { id: 'burpees', name: 'Burpees', category: 'cardio', muscleGroups: ['full'], description: 'Squat → planche → pompe → squat → saut. Exercice complet très intense.', defaultType: 'reps', defaultValue: 10, difficulty: 'hard', met: 10.0, variants: ['Burpees sans pompe', 'Burpees avec tuck jump'] },
+  { id: 'high-knees', name: 'Montées de genoux', category: 'cardio', muscleGroups: ['quads', 'abs'], description: 'Course sur place en montant les genoux le plus haut possible. Garder un rythme rapide.', defaultType: 'timed', defaultValue: 30, difficulty: 'medium', met: 8.0 },
+  { id: 'butt-kicks', name: 'Talons-fesses', category: 'cardio', muscleGroups: ['hamstrings', 'quads'], description: 'Course sur place en ramenant les talons aux fesses. Rythme soutenu.', defaultType: 'timed', defaultValue: 30, difficulty: 'easy', met: 6.0 },
+  { id: 'skater-jumps', name: 'Sauts de patineur', category: 'cardio', muscleGroups: ['quads', 'glutes', 'calves'], description: 'Sauter latéralement d\'un pied à l\'autre, comme un patineur. Amortir à chaque réception.', defaultType: 'timed', defaultValue: 30, difficulty: 'medium', met: 7.5 },
+  { id: 'tuck-jumps', name: 'Tuck Jumps', category: 'cardio', muscleGroups: ['quads', 'calves', 'abs'], description: 'Sauter en ramenant les genoux à la poitrine. Exercice explosif très intense.', defaultType: 'reps', defaultValue: 8, difficulty: 'hard', met: 9.0 },
+
+  // Stretching
+  { id: 'quad-stretch', name: 'Étirement quadriceps', category: 'stretch', muscleGroups: ['quads'], description: 'Debout, attraper le pied derrière et tirer vers les fessiers. 30s par jambe.', defaultType: 'timed', defaultValue: 30, difficulty: 'easy', met: 2.0 },
+  { id: 'hamstring-stretch', name: 'Étirement ischio-jambiers', category: 'stretch', muscleGroups: ['hamstrings'], description: 'Jambe tendue sur un support, pencher le buste en avant en gardant le dos droit.', defaultType: 'timed', defaultValue: 30, difficulty: 'easy', met: 2.0 },
+  { id: 'chest-stretch', name: 'Étirement pectoraux', category: 'stretch', muscleGroups: ['chest'], description: 'Bras contre un mur, tourner le buste pour étirer le pectoral. 30s par côté.', defaultType: 'timed', defaultValue: 30, difficulty: 'easy', met: 2.0 },
+  { id: 'cat-cow', name: 'Chat-vache', category: 'stretch', muscleGroups: ['back', 'abs'], description: 'À quatre pattes, alterner dos rond (chat) et dos creux (vache). Mouvement lent et contrôlé.', defaultType: 'timed', defaultValue: 45, difficulty: 'easy', met: 2.0 },
+  { id: 'child-pose', name: 'Posture de l\'enfant', category: 'stretch', muscleGroups: ['back', 'shoulders'], description: 'Genoux au sol, bras tendus devant, front au sol. Relâcher complètement le corps.', defaultType: 'timed', defaultValue: 45, difficulty: 'easy', met: 1.5 },
+  { id: 'pigeon-pose', name: 'Étirement pigeon', category: 'stretch', muscleGroups: ['glutes', 'hamstrings'], description: 'Une jambe pliée devant, l\'autre tendue derrière. Descendre progressivement. 40s par côté.', defaultType: 'timed', defaultValue: 40, difficulty: 'easy', met: 2.0 },
+
+  // Full body
+  { id: 'bear-crawl', name: 'Bear Crawl', category: 'full-body', muscleGroups: ['full'], description: 'À quatre pattes genoux décollés, avancer en déplaçant mains et pieds opposés. Garder le dos plat.', defaultType: 'timed', defaultValue: 30, difficulty: 'medium', met: 6.0 },
+  { id: 'inchworm', name: 'Inchworm', category: 'full-body', muscleGroups: ['full'], description: 'Debout, se pencher et marcher les mains vers l\'avant jusqu\'à la planche, puis revenir.', defaultType: 'reps', defaultValue: 8, difficulty: 'medium', met: 5.0 },
+];

@@ -1,6 +1,8 @@
 import { useCallback, useRef } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 
+const vibrationSupported = typeof navigator !== 'undefined' && 'vibrate' in navigator;
+
 function createContext(): AudioContext | null {
   try {
     return new AudioContext();
@@ -27,6 +29,10 @@ export function useAudioFeedback() {
   const mutedRef = useRef(muted);
   mutedRef.current = muted;
 
+  const [vibrationEnabled, setVibrationEnabled] = useLocalStorage('workout-vibration-enabled', true);
+  const vibrationRef = useRef(vibrationEnabled);
+  vibrationRef.current = vibrationEnabled;
+
   const ctxRef = useRef<AudioContext | null>(null);
 
   const getCtx = useCallback(() => {
@@ -40,26 +46,45 @@ export function useAudioFeedback() {
     return ctxRef.current;
   }, []);
 
+  const vibrate = useCallback((pattern: number | number[]) => {
+    if (vibrationRef.current && vibrationSupported) {
+      navigator.vibrate(pattern);
+    }
+  }, []);
+
   const tickBeep = useCallback(() => {
     const ctx = getCtx();
-    if (!ctx) return;
-    playTone(ctx, 440, 0.1, ctx.currentTime);
-  }, [getCtx]);
+    if (ctx) playTone(ctx, 440, 0.1, ctx.currentTime);
+    vibrate(100);
+  }, [getCtx, vibrate]);
 
   const transitionBeep = useCallback(() => {
     const ctx = getCtx();
-    if (!ctx) return;
-    playTone(ctx, 523, 0.12, ctx.currentTime);
-    playTone(ctx, 659, 0.12, ctx.currentTime + 0.15);
-  }, [getCtx]);
+    if (ctx) {
+      playTone(ctx, 523, 0.12, ctx.currentTime);
+      playTone(ctx, 659, 0.12, ctx.currentTime + 0.15);
+    }
+    vibrate([100, 50, 100]);
+  }, [getCtx, vibrate]);
 
   const finishBeep = useCallback(() => {
     const ctx = getCtx();
-    if (!ctx) return;
-    playTone(ctx, 523, 0.15, ctx.currentTime);
-    playTone(ctx, 659, 0.15, ctx.currentTime + 0.2);
-    playTone(ctx, 784, 0.25, ctx.currentTime + 0.4);
-  }, [getCtx]);
+    if (ctx) {
+      playTone(ctx, 523, 0.15, ctx.currentTime);
+      playTone(ctx, 659, 0.15, ctx.currentTime + 0.2);
+      playTone(ctx, 784, 0.25, ctx.currentTime + 0.4);
+    }
+    vibrate(300);
+  }, [getCtx, vibrate]);
 
-  return { tickBeep, transitionBeep, finishBeep, muted, setMuted };
+  return {
+    tickBeep,
+    transitionBeep,
+    finishBeep,
+    muted,
+    setMuted,
+    vibrationSupported,
+    vibrationEnabled,
+    setVibrationEnabled,
+  };
 }

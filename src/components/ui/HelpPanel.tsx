@@ -16,6 +16,7 @@ import {
   Pause,
   Square,
   GripVertical,
+  Keyboard,
 } from 'lucide-react';
 
 interface HelpItem {
@@ -27,14 +28,14 @@ interface HelpItem {
 function Section({ title, items }: { title: string; items: HelpItem[] }) {
   return (
     <div>
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">{title}</h3>
+      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{title}</h3>
       <div className="space-y-2">
         {items.map((item) => (
           <div key={item.label} className="flex items-start gap-3">
-            <div className="mt-0.5 shrink-0 text-slate-400">{item.icon}</div>
+            <div className="mt-0.5 shrink-0 text-slate-500 dark:text-slate-400">{item.icon}</div>
             <div>
-              <p className="text-sm font-medium text-slate-200">{item.label}</p>
-              <p className="text-xs text-slate-500">{item.description}</p>
+              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{item.label}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">{item.description}</p>
             </div>
           </div>
         ))}
@@ -100,6 +101,18 @@ const PLAYER_SECTIONS: { title: string; items: HelpItem[] }[] = [
       { icon: <Pause className={ICO} />, label: '"pause" / "stop" / "reprendre" / "resume"', description: 'Met en pause ou reprend' },
     ],
   },
+  {
+    title: 'Raccourcis clavier (desktop)',
+    items: [
+      { icon: <Keyboard className={ICO} />, label: 'Espace', description: 'Pause / Reprendre' },
+      { icon: <Keyboard className={ICO} />, label: '→ ou N', description: 'Bloc suivant' },
+      { icon: <Keyboard className={ICO} />, label: '← ou P', description: 'Bloc précédent' },
+      { icon: <Keyboard className={ICO} />, label: 'Échap', description: 'Ouvrir la confirmation d\'arrêt' },
+      { icon: <Keyboard className={ICO} />, label: 'M', description: 'Activer/couper le micro' },
+      { icon: <Keyboard className={ICO} />, label: 'S', description: 'Activer/couper les bips' },
+      { icon: <Keyboard className={ICO} />, label: 'V', description: 'Activer/couper la voix' },
+    ],
+  },
 ];
 
 export function HelpButton({ variant }: { variant: 'home' | 'player' }) {
@@ -112,8 +125,8 @@ export function HelpButton({ variant }: { variant: 'home' | 'player' }) {
         onClick={() => setOpen(true)}
         className={`rounded-xl p-2 transition-colors ${
           variant === 'player'
-            ? 'bg-slate-700 text-slate-400 hover:text-slate-200'
-            : 'flex items-center gap-2 bg-slate-700 px-3 py-2.5 text-sm font-medium text-slate-300 hover:bg-slate-600'
+            ? 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+            : 'flex items-center gap-2 bg-slate-200 dark:bg-slate-700 px-3 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
         }`}
         aria-label="Aide"
         title="Aide"
@@ -126,18 +139,18 @@ export function HelpButton({ variant }: { variant: 'home' | 'player' }) {
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 pt-12 sm:items-center sm:pt-4">
           <div className="fixed inset-0 bg-black/60" onClick={() => setOpen(false)} aria-hidden="true" />
           <div
-            className="relative w-full max-w-md rounded-2xl bg-slate-800 p-5 shadow-xl"
+            className="relative w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-5 shadow-xl"
             role="dialog"
             aria-modal="true"
             aria-label="Aide"
           >
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-50">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
                 {variant === 'home' ? 'Guide de l\'application' : 'Aide du lecteur'}
               </h2>
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-700 hover:text-slate-200"
+                className="rounded-lg p-1 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200"
                 aria-label="Fermer"
               >
                 <X className="h-5 w-5" />

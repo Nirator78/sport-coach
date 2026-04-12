@@ -11,8 +11,10 @@ import {
   Repeat,
   Clock,
   Layers,
+  ClipboardPaste,
 } from 'lucide-react';
 import { useWorkout } from '../stores/workoutStore';
+import { useClipboard } from '../stores/clipboardStore';
 import { BlockCard } from '../components/builder/BlockCard';
 import type { Block } from '../types/workout';
 import { uid } from '../utils/uid';
@@ -44,6 +46,7 @@ export function BuilderPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getSession, updateSession, createSession } = useWorkout();
+  const clipboard = useClipboard();
 
   const [sessionId, setSessionId] = useState(id ?? '');
   const [name, setName] = useState('');
@@ -100,6 +103,55 @@ export function BuilderPage() {
   const deleteBlock = useCallback(
     (blockId: string) => {
       setBlocks((prev) => prev.filter((b) => b.id !== blockId));
+      markDirty();
+    },
+    [markDirty],
+  );
+
+  const cloneBlock = useCallback((block: Block): Block => {
+    const cloned = { ...block, id: uid() };
+    if (cloned.type === 'repeat') {
+      return { ...cloned, children: cloned.children.map((c) => ({ ...c, id: uid() })) };
+    }
+    return cloned;
+  }, []);
+
+  const duplicateBlock = useCallback(
+    (blockId: string) => {
+      setBlocks((prev) => {
+        const idx = prev.findIndex((b) => b.id === blockId);
+        if (idx === -1) return prev;
+        const original = prev[idx];
+        if (!original) return prev;
+        const copy = cloneBlock(original);
+        const next = [...prev];
+        next.splice(idx + 1, 0, copy);
+        return next;
+      });
+      markDirty();
+    },
+    [markDirty, cloneBlock],
+  );
+
+  const pasteBlock = useCallback(() => {
+    if (!clipboard.copiedBlock) return;
+    const pasted = cloneBlock(clipboard.copiedBlock);
+    setBlocks((prev) => [...prev, pasted]);
+    markDirty();
+  }, [clipboard.copiedBlock, cloneBlock, markDirty]);
+
+  const moveBlock = useCallback(
+    (fromIndex: number, direction: 'up' | 'down') => {
+      setBlocks((prev) => {
+        const toIndex = direction === 'up' ? fromIndex - 1 : fromIndex + 1;
+        if (toIndex < 0 || toIndex >= prev.length) return prev;
+        const next = [...prev];
+        const moved = next[fromIndex];
+        if (!moved) return prev;
+        next.splice(fromIndex, 1);
+        next.splice(toIndex, 0, moved);
+        return next;
+      });
       markDirty();
     },
     [markDirty],
@@ -213,7 +265,7 @@ export function BuilderPage() {
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-1 text-sm text-slate-400 transition-colors hover:text-slate-200"
+          className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-200"
         >
           <ArrowLeft className="h-4 w-4" />
           Retour
@@ -222,7 +274,7 @@ export function BuilderPage() {
           {sessionId && (
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 rounded-xl bg-slate-700 px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-600"
+              className="flex items-center gap-2 rounded-xl bg-slate-200 dark:bg-slate-700 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-300 dark:hover:bg-slate-600"
               aria-label="Exporter"
             >
               <Download className="h-4 w-4" />
@@ -234,7 +286,7 @@ export function BuilderPage() {
             className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white transition-colors ${
               hasUnsaved
                 ? 'bg-emerald-600 hover:bg-emerald-500'
-                : 'bg-slate-700 text-slate-400'
+                : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
             }`}
             aria-label="Sauvegarder"
           >
@@ -254,11 +306,11 @@ export function BuilderPage() {
         }}
         onDoubleClick={(e) => e.currentTarget.select()}
         placeholder="Nom de la séance"
-        className="mb-4 w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-xl font-bold text-slate-50 placeholder-slate-500 outline-none focus:border-emerald-500"
+        className="mb-4 w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-3 text-xl font-bold text-slate-900 dark:text-slate-50 placeholder-slate-500 outline-none focus:border-emerald-500"
       />
 
       {/* Summary */}
-      <div className="mb-4 flex items-center gap-4 text-sm text-slate-400">
+      <div className="mb-4 flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
         <span className="flex items-center gap-1">
           <Layers className="h-4 w-4" />
           {blocks.length} bloc{blocks.length !== 1 ? 's' : ''}
@@ -278,6 +330,12 @@ export function BuilderPage() {
             index={index}
             onUpdate={updateBlock}
             onDelete={deleteBlock}
+            onDuplicate={duplicateBlock}
+            onCopy={clipboard.copyBlock}
+            onMoveUp={(i) => moveBlock(i, 'up')}
+            onMoveDown={(i) => moveBlock(i, 'down')}
+            isFirst={index === 0}
+            isLast={index === blocks.length - 1}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
@@ -289,23 +347,37 @@ export function BuilderPage() {
         ))}
       </div>
 
+      {/* Clipboard indicator + paste */}
+      {clipboard.copiedBlock && (
+        <div className="mt-4 flex items-center gap-2">
+          <span className="text-xs text-slate-400 dark:text-slate-500">1 bloc copié</span>
+          <button
+            onClick={pasteBlock}
+            className="flex items-center gap-1.5 rounded-xl bg-sky-600/20 px-3 py-2 text-sm font-medium text-sky-400 transition-colors hover:bg-sky-600/30"
+          >
+            <ClipboardPaste className="h-4 w-4" />
+            Coller
+          </button>
+        </div>
+      )}
+
       {/* Add block button */}
       <div className="relative mt-4">
         <button
           onClick={() => setShowAddPanel(!showAddPanel)}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-600 py-4 text-sm font-medium text-slate-400 transition-all hover:border-emerald-500 hover:text-emerald-400"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 py-4 text-sm font-medium text-slate-500 dark:text-slate-400 transition-all hover:border-emerald-500 hover:text-emerald-400"
         >
           <Plus className="h-5 w-5" />
           Ajouter un bloc
         </button>
 
         {showAddPanel && (
-          <div className="absolute left-0 right-0 top-full z-10 mt-2 grid grid-cols-2 gap-2 rounded-xl bg-slate-800 p-3 shadow-xl border border-slate-700">
+          <div className="absolute left-0 right-0 top-full z-10 mt-2 grid grid-cols-2 gap-2 rounded-xl bg-white dark:bg-slate-800 p-3 shadow-xl border border-slate-200 dark:border-slate-700">
             {BLOCK_TEMPLATES.map(({ type, label, icon: BIcon }) => (
               <button
                 key={type}
                 onClick={() => addBlock(type)}
-                className="flex items-center gap-2 rounded-xl bg-slate-700 px-3 py-3 text-sm font-medium text-slate-200 transition-colors hover:bg-slate-600"
+                className="flex items-center gap-2 rounded-xl bg-slate-200 dark:bg-slate-700 px-3 py-3 text-sm font-medium text-slate-700 dark:text-slate-200 transition-colors hover:bg-slate-300 dark:hover:bg-slate-600"
               >
                 <BIcon className="h-4 w-4" />
                 {label}

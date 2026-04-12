@@ -5,6 +5,7 @@ import { useCountdown } from './useCountdown';
 import { useAudioFeedback } from './useAudioFeedback';
 import { useSpeechSynthesis } from './useSpeechSynthesis';
 import { uid } from '../utils/uid';
+import { computeLogStats } from '../utils/logStats';
 
 type PlayerStatus = 'idle' | 'running' | 'paused' | 'finished';
 
@@ -31,6 +32,9 @@ interface PlayerSettings {
   setSoundEnabled: (enabled: boolean) => void;
   voiceEnabled: boolean;
   setVoiceEnabled: (enabled: boolean) => void;
+  vibrationSupported: boolean;
+  vibrationEnabled: boolean;
+  setVibrationEnabled: (enabled: boolean) => void;
 }
 
 export function useWorkoutPlayer(
@@ -43,10 +47,25 @@ export function useWorkoutPlayer(
   const [status, setStatus] = useState<PlayerStatus>('idle');
   const startTimeRef = useRef<string>(new Date().toISOString());
   const blocksSnapshotRef = useRef<Block[]>([]);
-  const { tickBeep, transitionBeep, finishBeep, muted: soundMuted, setMuted: setSoundMuted } = useAudioFeedback();
+  const { tickBeep, transitionBeep, finishBeep, muted: soundMuted, setMuted: setSoundMuted, vibrationSupported, vibrationEnabled, setVibrationEnabled } = useAudioFeedback();
   const { announce, stop: stopTts, enabled: voiceEnabled, setEnabled: setVoiceEnabled } = useSpeechSynthesis();
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
+
+  const buildLog = useCallback((completed: boolean): WorkoutLog => {
+    const stats = computeLogStats(blocksSnapshotRef.current);
+    return {
+      id: uid(),
+      sessionId,
+      sessionName,
+      startedAt: startTimeRef.current,
+      completedAt: new Date().toISOString(),
+      totalDuration: Math.round((Date.now() - new Date(startTimeRef.current).getTime()) / 1000),
+      blocks: blocksSnapshotRef.current,
+      completed,
+      ...stats,
+    };
+  }, [sessionId, sessionName]);
 
   const handleCountdownComplete = useCallback(() => {
     // Will be handled by the effect that watches currentIndex
@@ -94,16 +113,7 @@ export function useWorkoutPlayer(
         setStatus('finished');
         finishBeep();
         stopTts();
-        const log: WorkoutLog = {
-          id: uid(),
-          sessionId,
-          sessionName,
-          startedAt: startTimeRef.current,
-          completedAt: new Date().toISOString(),
-          totalDuration: Math.round((Date.now() - new Date(startTimeRef.current).getTime()) / 1000),
-          blocks: blocksSnapshotRef.current,
-        };
-        onFinishRef.current(log);
+        onFinishRef.current(buildLog(true));
       } else {
         setCurrentIndex(nextIdx);
         goToBlock(nextIdx, flatBlocks);
@@ -133,16 +143,7 @@ export function useWorkoutPlayer(
       setStatus('finished');
       finishBeep();
       stopTts();
-      const log: WorkoutLog = {
-        id: uid(),
-        sessionId,
-        sessionName,
-        startedAt: startTimeRef.current,
-        completedAt: new Date().toISOString(),
-        totalDuration: Math.round((Date.now() - new Date(startTimeRef.current).getTime()) / 1000),
-        blocks: blocksSnapshotRef.current,
-      };
-      onFinishRef.current(log);
+      onFinishRef.current(buildLog(true));
       return;
     }
     setCurrentIndex(nextIdx);
@@ -195,6 +196,9 @@ export function useWorkoutPlayer(
       setSoundEnabled: (v: boolean) => setSoundMuted(!v),
       voiceEnabled,
       setVoiceEnabled,
+      vibrationSupported,
+      vibrationEnabled,
+      setVibrationEnabled,
     },
   ];
 }

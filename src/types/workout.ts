@@ -48,4 +48,10 @@ export interface WorkoutLog {
   completedAt: string | null;
   totalDuration: number;
   blocks: Block[];
+  completed: boolean;
+  totalExercises: number;
+  totalReps: number;
+  totalActiveTime: number;
+  totalRestTime: number;
+  estimatedCalories?: number;
 }

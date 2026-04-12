@@ -13,6 +13,7 @@ interface WorkoutStore {
   importSession: (session: WorkoutSession) => void;
   getSession: (id: string) => WorkoutSession | undefined;
   addLog: (log: WorkoutLog) => void;
+  deleteLog: (id: string) => void;
 }
 
 const WorkoutContext = createContext<WorkoutStore | null>(null);
@@ -106,6 +107,13 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
     [setLogs],
   );
 
+  const deleteLog = useCallback(
+    (id: string) => {
+      setLogs((prev) => prev.filter((l) => l.id !== id));
+    },
+    [setLogs],
+  );
+
   return (
     <WorkoutContext.Provider
       value={{
@@ -118,6 +126,7 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
         importSession,
         getSession,
         addLog,
+        deleteLog,
       }}
     >
       {children}
