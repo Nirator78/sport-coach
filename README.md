@@ -1,16 +1,43 @@
-# React + Vite
+# Home Workout
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Application web pour construire et exécuter des séances de sport a la maison.
+Editeur visuel par blocs, lecteur avec compte a rebours et signaux sonores, commande vocale.
 
-Currently, two official plugins are available:
+100% local, aucun backend, donnees stockees en localStorage.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS
+- Web Speech API (commande vocale, Chrome uniquement)
+- Web Audio API (signaux sonores)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Installation
 
-## Expanding the ESLint configuration
+```bash
+npm install
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Lancer en dev
+
+```bash
+npm run dev
+```
+
+Ouvrir http://localhost:5173
+
+## Build production
+
+```bash
+npm run build
+npm run preview
+```
+
+## Commande vocale
+
+La reconnaissance vocale necessite **Chrome**. Commandes supportees :
+
+- "suivant" / "prochain" / "next" / "go"
+- "precedent" / "retour"
+- "pause" / "stop" / "reprendre" / "resume"
