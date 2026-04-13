@@ -153,36 +153,64 @@ export function PlayerPage() {
 
   // Finished screen
   if (state.status === 'finished' && finishedLog) {
+    const timings = state.blockTimings;
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center p-6 text-center">
-        <Trophy className="mb-4 h-16 w-16 text-amber-400" />
-        <h1 className="mb-2 text-3xl font-bold text-slate-900 dark:text-slate-50">Bravo !</h1>
-        <p className="mb-1 text-lg text-slate-600 dark:text-slate-300">{session.name}</p>
-        <p className="mb-8 text-slate-500 dark:text-slate-400">
-          Durée totale : {formatDuration(finishedLog.totalDuration)}
-        </p>
-        <div className="flex flex-wrap justify-center gap-3">
-          <button
-            onClick={() => exportLog(finishedLog)}
-            className="flex items-center gap-2 rounded-xl bg-slate-200 px-4 py-3 font-medium text-slate-700 transition-colors hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
-          >
-            <Download className="h-5 w-5" />
-            JSON
-          </button>
-          <button
-            onClick={() => exportTcx(finishedLog)}
-            className="flex items-center gap-2 rounded-xl bg-orange-100 px-4 py-3 font-medium text-orange-700 transition-colors hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/50"
-          >
-            <Download className="h-5 w-5" />
-            Strava (.tcx)
-          </button>
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 font-medium text-white transition-colors hover:bg-emerald-500"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            Accueil
-          </button>
+      <div className="flex min-h-dvh flex-col items-center p-6">
+        <div className="w-full max-w-md text-center">
+          <Trophy className="mx-auto mb-4 h-16 w-16 text-amber-400" />
+          <h1 className="mb-2 text-3xl font-bold text-slate-900 dark:text-slate-50">Bravo !</h1>
+          <p className="mb-1 text-lg text-slate-600 dark:text-slate-300">{session.name}</p>
+          <p className="mb-6 text-slate-500 dark:text-slate-400">
+            Durée totale : {formatDuration(finishedLog.totalDuration)}
+          </p>
+
+          {/* Block timings recap */}
+          {timings.length > 0 && (
+            <div className="mb-6 rounded-2xl bg-white p-4 text-left shadow dark:bg-slate-800">
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Détail par exercice</h2>
+              <div className="space-y-1.5">
+                {timings.map((t, i) => (
+                  <div key={i} className="flex items-center justify-between gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span
+                        className={`h-2 w-2 shrink-0 rounded-full ${
+                          t.type === 'rest' ? 'bg-amber-400' : t.type === 'exercise-timed' ? 'bg-sky-400' : 'bg-emerald-400'
+                        }`}
+                      />
+                      <span className="truncate text-sm text-slate-700 dark:text-slate-200">{t.name}</span>
+                    </div>
+                    <span className="shrink-0 tabular-nums text-sm font-medium text-slate-500 dark:text-slate-400">
+                      {formatDuration(t.duration)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-wrap justify-center gap-3">
+            <button
+              onClick={() => exportLog(finishedLog)}
+              className="flex items-center gap-2 rounded-xl bg-slate-200 px-4 py-3 font-medium text-slate-700 transition-colors hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+            >
+              <Download className="h-5 w-5" />
+              JSON
+            </button>
+            <button
+              onClick={() => exportTcx(finishedLog)}
+              className="flex items-center gap-2 rounded-xl bg-orange-100 px-4 py-3 font-medium text-orange-700 transition-colors hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/50"
+            >
+              <Download className="h-5 w-5" />
+              Strava (.tcx)
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 font-medium text-white transition-colors hover:bg-emerald-500"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              Accueil
+            </button>
+          </div>
         </div>
       </div>
     );

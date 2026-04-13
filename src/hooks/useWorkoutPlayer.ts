@@ -9,6 +9,12 @@ import { computeLogStats } from '../utils/logStats';
 
 type PlayerStatus = 'idle' | 'running' | 'paused' | 'finished';
 
+export interface BlockTiming {
+  name: string;
+  type: string;
+  duration: number; // seconds spent on this block
+}
+
 interface PlayerState {
   status: PlayerStatus;
   flatBlocks: Block[];
@@ -18,6 +24,7 @@ interface PlayerState {
   totalBlocks: number;
   countdown: { remaining: number; total: number; isRunning: boolean; progress: number };
   elapsed: number;
+  blockTimings: BlockTiming[];
 }
 
 interface PlayerControls {
@@ -47,6 +54,8 @@ export function useWorkoutPlayer(
   const [currentIndex, setCurrentIndex] = useState(0);
   const [status, setStatus] = useState<PlayerStatus>('idle');
   const [elapsed, setElapsed] = useState(0);
+  const [blockTimings, setBlockTimings] = useState<BlockTiming[]>([]);
+  const blockStartRef = useRef<number>(Date.now());
   const startTimeRef = useRef<string>(new Date().toISOString());
   const blocksSnapshotRef = useRef<Block[]>([]);
   const { tickBeep, transitionBeep, finishBeep, muted: soundMuted, setMuted: setSoundMuted, vibrationSupported, vibrationEnabled, setVibrationEnabled } = useAudioFeedback();
@@ -75,8 +84,24 @@ export function useWorkoutPlayer(
 
   const [countdown, countdownControls] = useCountdown(handleCountdownComplete);
 
+  const recordBlockTiming = useCallback(
+    (blocks: Block[], blockIndex: number) => {
+      const block = blocks[blockIndex];
+      if (!block) return;
+      const duration = Math.round((Date.now() - blockStartRef.current) / 1000);
+      const name = block.type === 'rest' ? 'Repos' : (block.type === 'exercise-reps' || block.type === 'exercise-timed') ? block.name : '';
+      setBlockTimings((prev) => [...prev, { name, type: block.type, duration }]);
+    },
+    [],
+  );
+
   const goToBlock = useCallback(
-    (index: number, blocks: Block[]) => {
+    (index: number, blocks: Block[], prevIndex?: number) => {
+      // Record timing for the block we're leaving
+      if (prevIndex != null && prevIndex >= 0) {
+        recordBlockTiming(blocks, prevIndex);
+      }
+      blockStartRef.current = Date.now();
       const block = blocks[index];
       if (!block) return;
       if (block.type === 'exercise-timed' || block.type === 'rest') {
@@ -87,7 +112,7 @@ export function useWorkoutPlayer(
       transitionBeep();
       announce(block);
     },
-    [countdownControls, transitionBeep, announce],
+    [countdownControls, transitionBeep, announce, recordBlockTiming],
   );
 
   // Beep on last 3 seconds
@@ -112,25 +137,28 @@ export function useWorkoutPlayer(
       // Auto-advance
       const nextIdx = currentIndex + 1;
       if (nextIdx >= flatBlocks.length) {
+        recordBlockTiming(flatBlocks, currentIndex);
         setStatus('finished');
         finishBeep();
         stopTts();
         onFinishRef.current(buildLog(true));
       } else {
         setCurrentIndex(nextIdx);
-        goToBlock(nextIdx, flatBlocks);
+        goToBlock(nextIdx, flatBlocks, currentIndex);
       }
     }
-  }, [countdown.remaining, countdown.isRunning, countdown.total, status, currentIndex, flatBlocks, finishBeep, goToBlock, sessionId, sessionName, stopTts]);
+  }, [countdown.remaining, countdown.isRunning, countdown.total, status, currentIndex, flatBlocks, finishBeep, goToBlock, recordBlockTiming, sessionId, sessionName, stopTts]);
 
   const start = useCallback(
     (blocks: Block[]) => {
       const flat = flattenBlocks(blocks);
       setFlatBlocks(flat);
       blocksSnapshotRef.current = blocks;
+      setBlockTimings([]);
       setCurrentIndex(0);
       setStatus('running');
       startTimeRef.current = new Date().toISOString();
+      blockStartRef.current = Date.now();
       if (flat.length > 0) {
         goToBlock(0, flat);
       }
@@ -142,6 +170,7 @@ export function useWorkoutPlayer(
     if (status !== 'running' && status !== 'paused') return;
     const nextIdx = currentIndex + 1;
     if (nextIdx >= flatBlocks.length) {
+      recordBlockTiming(flatBlocks, currentIndex);
       setStatus('finished');
       finishBeep();
       stopTts();
@@ -150,15 +179,15 @@ export function useWorkoutPlayer(
     }
     setCurrentIndex(nextIdx);
     if (status === 'paused') setStatus('running');
-    goToBlock(nextIdx, flatBlocks);
-  }, [status, currentIndex, flatBlocks, finishBeep, goToBlock, sessionId, sessionName, stopTts]);
+    goToBlock(nextIdx, flatBlocks, currentIndex);
+  }, [status, currentIndex, flatBlocks, finishBeep, goToBlock, recordBlockTiming, sessionId, sessionName, stopTts]);
 
   const previous = useCallback(() => {
     if (status !== 'running' && status !== 'paused') return;
     const prevIdx = Math.max(0, currentIndex - 1);
     setCurrentIndex(prevIdx);
     if (status === 'paused') setStatus('running');
-    goToBlock(prevIdx, flatBlocks);
+    goToBlock(prevIdx, flatBlocks, currentIndex);
   }, [status, currentIndex, flatBlocks, goToBlock]);
 
   const togglePause = useCallback(() => {
@@ -209,6 +238,7 @@ export function useWorkoutPlayer(
       totalBlocks: flatBlocks.length,
       countdown,
       elapsed,
+      blockTimings,
     },
     { start, next, previous, togglePause, stop },
     {
