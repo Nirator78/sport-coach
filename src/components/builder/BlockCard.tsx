@@ -93,16 +93,16 @@ export function BlockCard({
         nested ? '' : 'cursor-grab active:cursor-grabbing'
       }`}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {!nested && (
-          <GripVertical className="h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500" />
+          <GripVertical className="hidden h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500 sm:block" />
         )}
         <Icon className="h-5 w-5 shrink-0 text-slate-600 dark:text-slate-300" />
         <div className="min-w-0 flex-1">
           <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
-            {block.type === 'exercise-reps' && `${block.name} — ${block.reps} reps`}
-            {block.type === 'exercise-timed' && `${block.name} — ${formatDuration(block.duration)}`}
-            {block.type === 'rest' && `Repos — ${formatDuration(block.duration)}`}
+            {block.type === 'exercise-reps' && `${block.name} - ${block.reps} reps`}
+            {block.type === 'exercise-timed' && `${block.name} - ${formatDuration(block.duration)}`}
+            {block.type === 'rest' && `Repos - ${formatDuration(block.duration)}`}
             {block.type === 'repeat' && `Répéter ×${block.times}`}
           </span>
         </div>
@@ -134,7 +134,7 @@ export function BlockCard({
         </button>
         <button
           onClick={() => onCopy(block)}
-          className="rounded-lg p-1 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200"
+          className="hidden rounded-lg p-1 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200 sm:block"
           aria-label="Copier le bloc"
           title="Copier"
         >
@@ -142,7 +142,7 @@ export function BlockCard({
         </button>
         <button
           onClick={() => onDuplicate(block.id)}
-          className="rounded-lg p-1 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200"
+          className="hidden rounded-lg p-1 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200 sm:block"
           aria-label="Dupliquer le bloc"
           title="Dupliquer"
         >

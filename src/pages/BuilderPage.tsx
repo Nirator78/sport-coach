@@ -270,33 +270,33 @@ export function BuilderPage() {
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-200"
+          className="flex w-fit items-center gap-1 text-sm text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-200"
         >
           <ArrowLeft className="h-4 w-4" />
           Retour
         </button>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {sessionId && (
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 rounded-xl bg-slate-200 dark:bg-slate-700 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-300 dark:hover:bg-slate-600"
+              className="flex items-center gap-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 px-2.5 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-300 dark:hover:bg-slate-600 sm:px-3"
               aria-label="Exporter"
             >
-              <Download className="h-4 w-4" />
-              Exporter
+              <Download className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Exporter</span>
             </button>
           )}
           <button
             onClick={save}
-            className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white transition-colors ${
+            className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-sm font-medium text-white transition-colors sm:gap-2 sm:px-4 ${
               hasUnsaved
                 ? 'bg-emerald-600 hover:bg-emerald-500'
                 : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
             }`}
             aria-label="Sauvegarder"
           >
-            <Save className="h-4 w-4" />
-            Sauvegarder
+            <Save className="h-4 w-4 shrink-0" />
+            <span className="hidden sm:inline">Sauvegarder</span>
           </button>
         </div>
       </div>
@@ -379,15 +379,15 @@ export function BuilderPage() {
         </button>
 
         {showAddPanel && (
-          <div className="absolute left-0 right-0 top-full z-10 mt-2 grid grid-cols-2 gap-2 rounded-xl bg-white dark:bg-slate-800 p-3 shadow-xl border border-slate-200 dark:border-slate-700">
+          <div className="absolute left-0 right-0 top-full z-10 mt-2 grid grid-cols-2 gap-2 rounded-xl bg-white dark:bg-slate-800 p-3 shadow-xl border border-slate-200 dark:border-slate-700 sm:grid-cols-4">
             {BLOCK_TEMPLATES.map(({ type, label, icon: BIcon }) => (
               <button
                 key={type}
                 onClick={() => addBlock(type)}
-                className="flex items-center gap-2 rounded-xl bg-slate-200 dark:bg-slate-700 px-3 py-3 text-sm font-medium text-slate-700 dark:text-slate-200 transition-colors hover:bg-slate-300 dark:hover:bg-slate-600"
+                className="flex flex-col items-center justify-center gap-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 px-3 py-3 text-xs font-medium text-slate-700 dark:text-slate-200 transition-colors hover:bg-slate-300 dark:hover:bg-slate-600 sm:flex-row sm:gap-2 sm:text-sm"
               >
-                <BIcon className="h-4 w-4" />
-                {label}
+                <BIcon className="h-5 w-5 sm:h-4 sm:w-4" />
+                <span className="text-center">{label}</span>
               </button>
             ))}
           </div>

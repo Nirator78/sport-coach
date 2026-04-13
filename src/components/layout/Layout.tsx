@@ -52,7 +52,7 @@ export function Layout({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      {/* Main content — add bottom padding for mobile nav */}
+      {/* Main content - add bottom padding for mobile nav */}
       <main className={`mx-auto max-w-3xl px-4 py-6 ${!isBuilder ? 'pb-24 sm:pb-6' : ''}`}>{children}</main>
 
       {/* Bottom navigation (mobile only, not in builder) */}

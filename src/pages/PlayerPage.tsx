@@ -11,6 +11,7 @@ import {
   ArrowLeft,
   Trophy,
   Download,
+  RotateCcw,
   Volume2,
   VolumeX,
   Bell,
@@ -190,6 +191,17 @@ export function PlayerPage() {
 
           <div className="flex flex-wrap justify-center gap-3">
             <button
+              onClick={() => {
+                setFinishedLog(null);
+                controls.start(session.blocks);
+                void wakeLock.acquire();
+              }}
+              className="flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-3 font-medium text-white transition-colors hover:bg-violet-500"
+            >
+              <RotateCcw className="h-5 w-5" />
+              Refaire
+            </button>
+            <button
               onClick={() => exportLog(finishedLog)}
               className="flex items-center gap-2 rounded-xl bg-slate-200 px-4 py-3 font-medium text-slate-700 transition-colors hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
             >
@@ -239,7 +251,7 @@ export function PlayerPage() {
   return (
     <div className="flex min-h-dvh flex-col">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-3">
+      <div className="flex flex-col-reverse gap-1.5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <span className="text-sm text-slate-500 dark:text-slate-400">{session.name}</span>
           <span className="tabular-nums text-sm font-medium text-slate-700 dark:text-slate-200">{formatDuration(elapsed)}</span>
@@ -262,7 +274,7 @@ export function PlayerPage() {
           {/* Sound toggle (beeps) */}
           <button
             onClick={() => settings.setSoundEnabled(!settings.soundEnabled)}
-            className={`rounded-xl p-2 transition-colors ${
+            className={`flex items-center justify-center rounded-xl p-2 transition-colors ${
               settings.soundEnabled
                 ? 'bg-slate-200 text-amber-500 hover:bg-slate-300 dark:bg-slate-700 dark:text-amber-400 dark:hover:bg-slate-600'
                 : 'bg-slate-100 text-slate-400 hover:text-slate-500 dark:bg-slate-800 dark:text-slate-600 dark:hover:text-slate-400'
@@ -276,7 +288,7 @@ export function PlayerPage() {
           {/* Voice toggle (TTS) */}
           <button
             onClick={() => settings.setVoiceEnabled(!settings.voiceEnabled)}
-            className={`rounded-xl p-2 transition-colors ${
+            className={`flex items-center justify-center rounded-xl p-2 transition-colors ${
               settings.voiceEnabled
                 ? 'bg-slate-200 text-sky-500 hover:bg-slate-300 dark:bg-slate-700 dark:text-sky-400 dark:hover:bg-slate-600'
                 : 'bg-slate-100 text-slate-400 hover:text-slate-500 dark:bg-slate-800 dark:text-slate-600 dark:hover:text-slate-400'
@@ -291,7 +303,7 @@ export function PlayerPage() {
           {settings.vibrationSupported && (
             <button
               onClick={() => settings.setVibrationEnabled(!settings.vibrationEnabled)}
-              className={`rounded-xl p-2 transition-colors ${
+              className={`flex items-center justify-center rounded-xl p-2 transition-colors ${
                 settings.vibrationEnabled
                   ? 'bg-slate-200 text-violet-500 hover:bg-slate-300 dark:bg-slate-700 dark:text-violet-400 dark:hover:bg-slate-600'
                   : 'bg-slate-100 text-slate-400 hover:text-slate-500 dark:bg-slate-800 dark:text-slate-600 dark:hover:text-slate-400'
@@ -307,7 +319,7 @@ export function PlayerPage() {
           <button
             onClick={speech.supported ? speech.toggle : undefined}
             disabled={!speech.supported}
-            className={`relative rounded-xl p-2 transition-colors ${
+            className={`relative flex items-center justify-center rounded-xl p-2 transition-colors ${
               !speech.supported || speech.error
                 ? 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600'
                 : speech.listening
@@ -332,7 +344,7 @@ export function PlayerPage() {
           {/* Stop */}
           <button
             onClick={() => setShowStopConfirm(true)}
-            className="rounded-xl bg-slate-200 p-2 text-red-500 transition-colors hover:bg-red-600 hover:text-white dark:bg-slate-700 dark:text-red-400"
+            className="flex items-center justify-center rounded-xl bg-slate-200 p-2 text-red-500 transition-colors hover:bg-red-600 hover:text-white dark:bg-slate-700 dark:text-red-400"
             aria-label="Arrêter la séance"
           >
             <Square className="h-5 w-5" />
@@ -353,7 +365,7 @@ export function PlayerPage() {
       )}
 
       {/* Progress bar */}
-      <div className="px-4">
+      <div className="px-4 pt-3">
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
           <div
             className="h-full rounded-full transition-all duration-500"
@@ -365,40 +377,35 @@ export function PlayerPage() {
         </p>
       </div>
 
-      {/* Main content + Controls */}
+      {/* Contenu principal */}
       <div className={`flex flex-1 ${isLandscape ? 'flex-row items-center gap-4 px-4 py-2' : 'flex-col'}`}>
-        {/* Exercise info & timer */}
+        {/* Infos exercice & timer */}
         <div
           key={`block-${currentIndex}`}
-          className={`flex flex-col items-center justify-center motion-reduce:!animate-none ${isLandscape ? 'flex-1' : 'flex-1 px-4 py-8'}`}
+          className={`flex flex-col items-center justify-center motion-reduce:animate-none! ${isLandscape ? 'flex-1' : 'flex-1 px-4 py-4'}`}
           style={{
             animation: `${transitionDirRef.current === 'right' ? 'slideFromRight' : 'slideFromLeft'} 300ms ease-out`,
           }}
         >
-          {/* Block type badge */}
           <span
-            className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider ${isLandscape ? 'mb-2' : 'mb-4'}`}
+            className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider ${isLandscape ? 'mb-2' : 'mb-3'}`}
             style={{ backgroundColor: `${color}22`, color }}
           >
             {currentBlock.type === 'rest' ? 'Repos' : currentBlock.type === 'exercise-reps' ? 'Reps' : 'Chrono'}
           </span>
 
-          {/* Exercise name */}
-          <h1 className={`text-center font-bold leading-tight text-slate-900 dark:text-slate-50 ${isLandscape ? 'mb-2 text-2xl' : 'mb-6 text-4xl sm:text-5xl lg:text-6xl'}`}>
+          <h1 className={`text-center font-bold leading-tight text-slate-900 dark:text-slate-50 ${isLandscape ? 'mb-2 text-2xl' : 'mb-4 text-4xl sm:text-5xl lg:text-6xl'}`}>
             {blockLabel(currentBlock)}
           </h1>
 
-          {/* Notes */}
-          {!isLandscape && (currentBlock.type === 'exercise-reps' || currentBlock.type === 'exercise-timed') &&
-            currentBlock.notes && (
-              <p className="mb-6 text-center text-sm text-slate-500 dark:text-slate-400">{currentBlock.notes}</p>
-            )}
+          {!isLandscape && (currentBlock.type === 'exercise-reps' || currentBlock.type === 'exercise-timed') && currentBlock.notes && (
+            <p className="mb-4 text-center text-sm text-slate-500 dark:text-slate-400">{currentBlock.notes}</p>
+          )}
 
-          {/* Countdown or reps */}
           {hasTiming ? (
             (() => {
               const timerStyle = getTimerColor(countdown.remaining, countdown.total);
-              const ringSize = isLandscape ? 150 : 220;
+              const ringSize = isLandscape ? 150 : 200;
               return (
                 <ProgressRing
                   progress={countdown.progress}
@@ -418,53 +425,75 @@ export function PlayerPage() {
               );
             })()
           ) : (
-            <div className={`flex items-center justify-center ${isLandscape ? 'h-[150px]' : 'h-[220px]'}`}>
+            <div className={`flex items-center justify-center ${isLandscape ? 'h-37.5' : 'h-50'}`}>
               <span className={`font-bold text-slate-900 dark:text-slate-50 ${isLandscape ? 'text-5xl' : 'text-6xl sm:text-7xl'}`}>
                 {currentBlock.type === 'exercise-reps' ? currentBlock.reps : ''}
               </span>
             </div>
           )}
 
-          {/* Next block preview */}
           {nextBlock && !isLandscape && (
-            <p className="mt-6 text-sm text-slate-500">
+            <p className="mt-4 text-sm text-slate-500">
               Ensuite : {blockLabel(nextBlock)}
-              {(nextBlock.type === 'exercise-timed' || nextBlock.type === 'rest') &&
-                ` — ${formatDuration(nextBlock.duration)}`}
-              {nextBlock.type === 'exercise-reps' && ` — ${nextBlock.reps} reps`}
+              {(nextBlock.type === 'exercise-timed' || nextBlock.type === 'rest') && ` - ${formatDuration(nextBlock.duration)}`}
+              {nextBlock.type === 'exercise-reps' && ` - ${nextBlock.reps} reps`}
             </p>
           )}
         </div>
-
-        {/* Controls */}
-        <div className={`safe-bottom flex items-center justify-center gap-4 ${isLandscape ? 'flex-col px-4' : 'px-4 pb-8'}`}>
-          <button
-            onClick={controls.previous}
-            className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-200 text-slate-700 transition-all hover:bg-slate-300 active:scale-95 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
-            aria-label="Bloc précédent"
-          >
-            <SkipBack className="h-6 w-6" />
-          </button>
-          <button
-            onClick={controls.togglePause}
-            className="flex h-16 w-16 items-center justify-center rounded-2xl text-white transition-all active:scale-95"
-            style={{ backgroundColor: color }}
-            aria-label={state.status === 'paused' ? 'Reprendre' : 'Pause'}
-          >
-            {state.status === 'paused' ? (
-              <Play className="h-7 w-7" />
-            ) : (
-              <Pause className="h-7 w-7" />
-            )}
-          </button>
-          <button
-            onClick={controls.next}
-            className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-200 text-slate-700 transition-all hover:bg-slate-300 active:scale-95 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
-            aria-label="Bloc suivant"
-          >
-            <SkipForward className="h-6 w-6" />
-          </button>
-        </div>
+        {/* Contrôles portrait - hors du conteneur principal */}
+        {!isLandscape && (
+          <div className="flex items-center justify-center gap-3 border-b border-slate-200/60 px-4 py-3 dark:border-slate-700/60">
+            <button
+              onClick={controls.previous}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-200 text-slate-700 transition-all hover:bg-slate-300 active:scale-95 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+              aria-label="Bloc précédent"
+            >
+              <SkipBack className="h-5 w-5" />
+            </button>
+            <button
+              onClick={controls.togglePause}
+              className="flex h-14 w-14 items-center justify-center rounded-2xl text-white transition-all active:scale-95"
+              style={{ backgroundColor: color }}
+              aria-label={state.status === 'paused' ? 'Reprendre' : 'Pause'}
+            >
+              {state.status === 'paused' ? <Play className="h-6 w-6" /> : <Pause className="h-6 w-6" />}
+            </button>
+            <button
+              onClick={controls.next}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-200 text-slate-700 transition-all hover:bg-slate-300 active:scale-95 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+              aria-label="Bloc suivant"
+            >
+              <SkipForward className="h-5 w-5" />
+            </button>
+          </div>
+        )}
+        {/* Contrôles paysage - colonne à droite */}
+        {isLandscape && (
+          <div className="flex flex-col items-center justify-center gap-4 px-4">
+            <button
+              onClick={controls.previous}
+              className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-200 text-slate-700 transition-all hover:bg-slate-300 active:scale-95 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+              aria-label="Bloc précédent"
+            >
+              <SkipBack className="h-6 w-6" />
+            </button>
+            <button
+              onClick={controls.togglePause}
+              className="flex h-16 w-16 items-center justify-center rounded-2xl text-white transition-all active:scale-95"
+              style={{ backgroundColor: color }}
+              aria-label={state.status === 'paused' ? 'Reprendre' : 'Pause'}
+            >
+              {state.status === 'paused' ? <Play className="h-7 w-7" /> : <Pause className="h-7 w-7" />}
+            </button>
+            <button
+              onClick={controls.next}
+              className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-200 text-slate-700 transition-all hover:bg-slate-300 active:scale-95 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+              aria-label="Bloc suivant"
+            >
+              <SkipForward className="h-6 w-6" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Share panel */}

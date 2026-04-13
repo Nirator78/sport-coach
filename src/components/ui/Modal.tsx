@@ -24,12 +24,12 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/40 dark:bg-black/60" onClick={onClose} aria-hidden="true" />
       <div
-        className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800"
+        className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800"
         role="dialog"
         aria-modal="true"
         aria-label={title}
       >
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between sticky top-0 bg-white dark:bg-slate-800 pb-2 -mt-2 pt-2 z-10">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">{title}</h2>
           <button
             onClick={onClose}

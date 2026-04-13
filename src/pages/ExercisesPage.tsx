@@ -71,7 +71,7 @@ export function ExercisesPage() {
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value as ExerciseCategory | '')}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
+          className="flex-1 min-w-35 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
         >
           <option value="">Toutes catégories</option>
           {ALL_CATEGORIES.map((c) => <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>)}
@@ -79,7 +79,7 @@ export function ExercisesPage() {
         <select
           value={filterDifficulty}
           onChange={(e) => setFilterDifficulty(e.target.value as Difficulty | '')}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
+          className="flex-1 min-w-35 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
         >
           <option value="">Toute difficulté</option>
           {ALL_DIFFICULTIES.map((d) => <option key={d} value={d}>{DIFFICULTY_LABELS[d]}</option>)}
@@ -87,7 +87,7 @@ export function ExercisesPage() {
         <select
           value={filterMuscle}
           onChange={(e) => setFilterMuscle(e.target.value as MuscleGroup | '')}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
+          className="flex-1 min-w-35 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
         >
           <option value="">Tous muscles</option>
           {ALL_MUSCLES.map((m) => <option key={m} value={m}>{MUSCLE_LABELS[m]}</option>)}
@@ -98,7 +98,7 @@ export function ExercisesPage() {
       <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">{filtered.length} exercice{filtered.length !== 1 ? 's' : ''}</p>
 
       {/* Grid */}
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((exercise) => (
           <div
             key={exercise.id}
@@ -175,7 +175,7 @@ export function ExercisesPage() {
               {selected.custom && (
                 <button
                   onClick={() => { setDeleteTarget(selected.id); setSelected(null); }}
-                  className="rounded-xl bg-red-50 p-2.5 text-red-600 transition-colors hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400"
+                  className="flex items-center justify-center rounded-xl bg-red-50 p-2.5 text-red-600 transition-colors hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400"
                 >
                   <Trash2 className="h-5 w-5" />
                 </button>

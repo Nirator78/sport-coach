@@ -94,7 +94,7 @@ export function SettingsPage() {
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
               Poids (kg)
-              <span className="ml-1 text-xs font-normal text-slate-400 dark:text-slate-500">— pour l'estimation des calories</span>
+              <span className="ml-1 text-xs font-normal text-slate-400 dark:text-slate-500">- pour l'estimation des calories</span>
             </label>
             <input
               type="number"
@@ -113,12 +113,12 @@ export function SettingsPage() {
       <section className="mb-8">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Apparence</h2>
         <div className="rounded-2xl bg-white p-4 shadow dark:bg-slate-800">
-          <div className="flex gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {themeOptions.map(({ value, label, icon: ThIcon }) => (
               <button
                 key={value}
                 onClick={() => setTheme(value)}
-                className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                className={`flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
                   theme === value
                     ? 'bg-emerald-600 text-white'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'

@@ -140,7 +140,7 @@ export function HistoryPage() {
         <div className="space-y-3">
           {sorted.map((log) => (
             <div key={log.id} className="rounded-2xl bg-white p-4 shadow dark:bg-slate-800">
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     {log.completed ? (
@@ -172,22 +172,24 @@ export function HistoryPage() {
                     )}
                   </div>
                 </div>
-                <div className="flex shrink-0 gap-1">
+                <div className="flex shrink-0 gap-1.5 sm:flex-col sm:gap-1">
                   <button
                     onClick={() => exportLog(log)}
-                    className="rounded-xl bg-slate-100 p-2 text-slate-500 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600"
+                    className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-slate-100 px-3 py-2 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600 sm:flex-initial sm:p-2"
                     aria-label="Exporter JSON"
                     title="Exporter JSON"
                   >
                     <Download className="h-4 w-4" />
+                    <span className="sm:hidden">JSON</span>
                   </button>
                   <button
                     onClick={() => exportTcx(log)}
-                    className="rounded-xl bg-orange-50 p-2 text-orange-600 transition-colors hover:bg-orange-100 dark:bg-orange-900/20 dark:text-orange-400 dark:hover:bg-orange-900/30"
+                    className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-orange-50 px-3 py-2 text-xs font-medium text-orange-600 transition-colors hover:bg-orange-100 dark:bg-orange-900/20 dark:text-orange-400 dark:hover:bg-orange-900/30 sm:flex-initial sm:p-2"
                     aria-label="Exporter TCX (Strava)"
                     title="Export Strava (.tcx)"
                   >
                     <Download className="h-4 w-4" />
+                    <span className="sm:hidden">TCX</span>
                   </button>
                   <button
                     onClick={() => setDeleteTarget(log.id)}

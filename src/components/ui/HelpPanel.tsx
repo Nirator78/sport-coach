@@ -60,14 +60,14 @@ const HOME_SECTIONS: { title: string; items: HelpItem[] }[] = [
     title: 'Import / Export',
     items: [
       { icon: <Upload className={ICO} />, label: 'Importer', description: 'Charger une séance depuis un fichier JSON' },
-      { icon: <Download className={ICO} />, label: 'Exporter', description: 'Disponible dans l\'éditeur — télécharge la séance en JSON' },
+      { icon: <Download className={ICO} />, label: 'Exporter', description: 'Disponible dans l\'éditeur - télécharge la séance en JSON' },
     ],
   },
   {
     title: 'Éditeur de séance',
     items: [
       { icon: <GripVertical className={ICO} />, label: 'Glisser-déposer', description: 'Maintenez et déplacez un bloc pour le réordonner' },
-      { icon: <span className="flex h-4 w-4 items-center justify-center text-[10px] font-bold text-emerald-400">R</span>, label: 'Exercice (reps)', description: 'Bloc avec un nombre de répétitions — passage manuel au suivant' },
+      { icon: <span className="flex h-4 w-4 items-center justify-center text-[10px] font-bold text-emerald-400">R</span>, label: 'Exercice (reps)', description: 'Bloc avec un nombre de répétitions - passage manuel au suivant' },
       { icon: <span className="flex h-4 w-4 items-center justify-center text-[10px] font-bold text-sky-400">C</span>, label: 'Exercice (chrono)', description: 'Bloc avec un compte à rebours automatique' },
       { icon: <span className="flex h-4 w-4 items-center justify-center text-[10px] font-bold text-amber-400">P</span>, label: 'Repos', description: 'Pause chronométrée entre les exercices' },
       { icon: <span className="flex h-4 w-4 items-center justify-center text-[10px] font-bold text-violet-400">×</span>, label: 'Répétition', description: 'Groupe de blocs répété N fois (1 niveau max)' },
@@ -123,10 +123,10 @@ export function HelpButton({ variant }: { variant: 'home' | 'player' }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className={`rounded-xl p-2 transition-colors ${
+        className={`transition-colors ${
           variant === 'player'
-            ? 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-            : 'flex items-center gap-2 bg-slate-200 dark:bg-slate-700 px-3 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
+            ? 'flex items-center justify-center rounded-xl bg-slate-200 p-2 text-slate-500 hover:text-slate-900 dark:bg-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+            : 'flex items-center gap-2 rounded-xl bg-slate-200 px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
         }`}
         aria-label="Aide"
         title="Aide"

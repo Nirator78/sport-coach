@@ -19,7 +19,7 @@ export function ReloadPrompt() {
         });
       });
     }).catch(() => {
-      // SW registration failed — silently ignore
+      // SW registration failed - silently ignore
     });
   }, []);
 

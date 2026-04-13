@@ -16,7 +16,7 @@ export function useWakeLock() {
         setActive(false);
       });
     } catch {
-      // Silently fail — user navigated away or API not available
+      // Silently fail - user navigated away or API not available
     }
   }, []);
 
