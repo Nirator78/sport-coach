@@ -188,7 +188,7 @@ export function PlayerPage() {
     );
   }
 
-  const { currentBlock, nextBlock, currentIndex, totalBlocks, countdown } = state;
+  const { currentBlock, nextBlock, currentIndex, totalBlocks, countdown, elapsed } = state;
 
   // Track block transition direction
   if (currentIndex !== prevIndexRef.current && prevIndexRef.current !== -1) {
@@ -212,7 +212,10 @@ export function PlayerPage() {
     <div className="flex min-h-dvh flex-col">
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3">
-        <span className="text-sm text-slate-500 dark:text-slate-400">{session.name}</span>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-slate-500 dark:text-slate-400">{session.name}</span>
+          <span className="tabular-nums text-sm font-medium text-slate-700 dark:text-slate-200">{formatDuration(elapsed)}</span>
+        </div>
         <div className="flex items-center gap-1.5">
           {/* Wake lock indicator */}
           {wakeLock.supported && wakeLock.active && (

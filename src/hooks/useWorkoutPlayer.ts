@@ -17,6 +17,7 @@ interface PlayerState {
   nextBlock: Block | null;
   totalBlocks: number;
   countdown: { remaining: number; total: number; isRunning: boolean; progress: number };
+  elapsed: number;
 }
 
 interface PlayerControls {
@@ -45,6 +46,7 @@ export function useWorkoutPlayer(
   const [flatBlocks, setFlatBlocks] = useState<Block[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [status, setStatus] = useState<PlayerStatus>('idle');
+  const [elapsed, setElapsed] = useState(0);
   const startTimeRef = useRef<string>(new Date().toISOString());
   const blocksSnapshotRef = useRef<Block[]>([]);
   const { tickBeep, transitionBeep, finishBeep, muted: soundMuted, setMuted: setSoundMuted, vibrationSupported, vibrationEnabled, setVibrationEnabled } = useAudioFeedback();
@@ -171,11 +173,28 @@ export function useWorkoutPlayer(
 
   const stop = useCallback(() => {
     setStatus('idle');
+    setElapsed(0);
     countdownControls.reset();
     setCurrentIndex(0);
     setFlatBlocks([]);
     stopTts();
   }, [countdownControls, stopTts]);
+
+  // General elapsed timer
+  useEffect(() => {
+    if (status !== 'running') return;
+    const id = setInterval(() => {
+      setElapsed(Math.round((Date.now() - new Date(startTimeRef.current).getTime()) / 1000));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [status]);
+
+  // Sync elapsed on pause (so it doesn't drift)
+  useEffect(() => {
+    if (status === 'paused') {
+      setElapsed(Math.round((Date.now() - new Date(startTimeRef.current).getTime()) / 1000));
+    }
+  }, [status]);
 
   const currentBlock = flatBlocks[currentIndex] ?? null;
   const nextBlock = flatBlocks[currentIndex + 1] ?? null;
@@ -189,6 +208,7 @@ export function useWorkoutPlayer(
       nextBlock,
       totalBlocks: flatBlocks.length,
       countdown,
+      elapsed,
     },
     { start, next, previous, togglePause, stop },
     {
