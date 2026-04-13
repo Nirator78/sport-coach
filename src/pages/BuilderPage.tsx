@@ -54,6 +54,7 @@ export function BuilderPage() {
   const [hasUnsaved, setHasUnsaved] = useState(false);
   const dragIdxRef = useRef<number | null>(null);
   const [showAddPanel, setShowAddPanel] = useState(false);
+  const [lastAddedId, setLastAddedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -83,7 +84,9 @@ export function BuilderPage() {
 
   const addBlock = useCallback(
     (type: Block['type']) => {
-      setBlocks((prev) => [...prev, createDefaultBlock(type)]);
+      const block = createDefaultBlock(type);
+      setBlocks((prev) => [...prev, block]);
+      setLastAddedId(block.id);
       markDirty();
       setShowAddPanel(false);
     },
@@ -159,14 +162,16 @@ export function BuilderPage() {
 
   const addChild = useCallback(
     (parentId: string, type: Block['type']) => {
+      const child = createDefaultBlock(type);
       setBlocks((prev) =>
         prev.map((b) => {
           if (b.id === parentId && b.type === 'repeat') {
-            return { ...b, children: [...b.children, createDefaultBlock(type)] };
+            return { ...b, children: [...b.children, child] };
           }
           return b;
         }),
       );
+      setLastAddedId(child.id);
       markDirty();
     },
     [markDirty],
@@ -336,6 +341,8 @@ export function BuilderPage() {
             onMoveDown={(i) => moveBlock(i, 'down')}
             isFirst={index === 0}
             isLast={index === blocks.length - 1}
+            defaultExpanded={block.id === lastAddedId}
+            lastAddedId={lastAddedId}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDrop={handleDrop}

@@ -29,6 +29,8 @@ interface BlockCardProps {
   onMoveDown?: (index: number) => void;
   isFirst?: boolean;
   isLast?: boolean;
+  defaultExpanded?: boolean;
+  lastAddedId?: string | null;
   nested?: boolean;
   // For repeat block children management
   onAddChild?: (parentId: string, blockType: Block['type']) => void;
@@ -58,13 +60,15 @@ export function BlockCard({
   onMoveDown,
   isFirst = false,
   isLast = false,
+  defaultExpanded = false,
+  lastAddedId = null,
   nested = false,
   onAddChild,
   onUpdateChild,
   onDeleteChild,
   onReorderChildren,
 }: BlockCardProps) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const style = TYPE_STYLES[block.type];
   const Icon = style.icon;
@@ -290,6 +294,7 @@ export function BlockCard({
                       }
                       setChildDragIdx(null);
                     }}
+                    defaultExpanded={child.id === lastAddedId}
                     nested
                   />
                 ))}
