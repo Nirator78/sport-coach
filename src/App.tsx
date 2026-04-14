@@ -25,19 +25,19 @@ function SplashScreen({ onDone }: { onDone: () => void }) {
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0f172a] transition-opacity duration-500 ${fading ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+      className={`fixed inset-0 z-9999 flex flex-col items-center justify-center bg-[#0f172a] transition-opacity duration-500 ${fading ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
     >
       <img
-        src="/favicon.svg"
+        src="/logo.svg"
         alt="Home Workout"
-        className="mb-5 h-24 w-24 drop-shadow-lg"
+        className="mb-5 h-40 w-40 drop-shadow-lg"
         style={{ animation: 'splashLogo 0.5s ease-out' }}
       />
       <p className="mb-6 text-3xl font-bold tracking-tight text-white">Home Workout</p>
       <div className="flex gap-2">
-        <span className="h-2 w-2 animate-bounce rounded-full bg-violet-500" style={{ animationDelay: '0ms' }} />
-        <span className="h-2 w-2 animate-bounce rounded-full bg-violet-400" style={{ animationDelay: '160ms' }} />
-        <span className="h-2 w-2 animate-bounce rounded-full bg-violet-300" style={{ animationDelay: '320ms' }} />
+        <span className="h-2 w-2 animate-bounce rounded-full bg-green-500" style={{ animationDelay: '0ms' }} />
+        <span className="h-2 w-2 animate-bounce rounded-full bg-green-400" style={{ animationDelay: '160ms' }} />
+        <span className="h-2 w-2 animate-bounce rounded-full bg-green-300" style={{ animationDelay: '320ms' }} />
       </div>
       <style>{`
         @keyframes splashLogo {

@@ -1,13 +1,13 @@
 {
   "name": "Home Workout",
   "short_name": "Workout",
-  "description": "Application de séances de sport à la maison",
+  "description": "Application de séances de sport à la maison — créez et jouez vos entraînements personnalisés.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
   "icons": [
-    { "src": "/favicon.svg", "sizes": "192x192", "type": "image/svg+xml" },
-    { "src": "/favicon.svg", "sizes": "512x512", "type": "image/svg+xml" }
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/logo.svg",    "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
 }
